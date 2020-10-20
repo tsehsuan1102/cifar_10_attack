@@ -29,12 +29,14 @@ from utils import imshow, image_folder_custom_label
 model_list = ['resnet20_cifar10', 'resnet1001_cifar10', 'resnet1202_cifar10', 'nin_cifar10', 'preresnet20_cifar10']
 model_name = model_list[3]
 
+
+
 def get_transform(size):
     mean_nums = [0.5, 0.5, 0.5]
     std_nums  = [0.25, 0.25, 0.25]
     
     predict_transform = transforms.Compose([
-        transforms.Resize(size, size),
+        transforms.Resize((size, size)),
         transforms.ToTensor(),
         #transforms.Normalize(mean_nums, std_nums),
     ])
@@ -57,24 +59,38 @@ def save_image(tensor, filename):
 
 
 
+
+
+
+
 def main(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-
+    
     ## load original data
-    origin_data  = image_folder_custom_label(root_dir='./origin', transform=transform, idx2label=idx2label)
-    origin_loader = torch.utils.data.DataLoader(normal_data, batch_size=1, shuffle=False)
+    transform = get_transform(32)
+    origin_data  = image_folder_custom_label(root_dir='./origin', transform=transform, idx2label=classes)
+    origin_loader = torch.utils.data.DataLoader(origin_data, batch_size=1, shuffle=False)
 
-
-
+    
+    ## load model
     model = ptcv_get_model(model_name, pretrained=True)
     print(model)
+    
+    
+    pbar = tqdm(origin_loader)
+    for i, (images, labels) in enumerate(pbar):
 
+        print(i)
+    
+
+
+    ## attack
     atk = torchattacks.PGD(model, eps = 8/255, alpha = 2/255, steps=4)
     adversarial_images = atk(images, labels)
     
-    print(adversarial_images)    
+    print(adversarial_images.shape)    
 
 
 

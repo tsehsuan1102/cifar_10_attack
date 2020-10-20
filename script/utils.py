@@ -14,8 +14,8 @@ def image_folder_custom_label(root_dir, transform, idx2label) :
     # type : List
     # index -> label
     # ex) ['tench', 'goldfish', 'great_white_shark', 'tiger_shark']
-    
     old_data = dsets.ImageFolder(root=root_dir, transform=transform)
+
     old_classes = old_data.classes
     
     label2idx = {}
