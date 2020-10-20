@@ -64,6 +64,33 @@ def fgsm_attack(image, epsilon, data_grad):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def diff(imga, imgb):
+
+
+
+
+
+
 def save_image(tensor, filename):
     unloader = transforms.ToPILImage()
 
@@ -74,6 +101,11 @@ def save_image(tensor, filename):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
     image.save(dir_name + filename)
+
+
+
+
+
 
 def attack(model, data_loader):
     #x = torch.randn(1, 3, 224, 224)
@@ -96,9 +128,6 @@ def attack(model, data_loader):
         predict = torch.argmax(y, 1)
         
         print('origin: ', predict)
-
-
-
         if labels[0] != predict[0]:
             for pic, name in zip(perturbed_batch, batch['filenames']):
                 save_image(pic, name)
@@ -141,20 +170,13 @@ def attack(model, data_loader):
         f.write(str(origin)+'\n'+str(perb)+'\n')
 
 
-
 #def eval()
-
-
-
-
 
 
 
 def main(args):
     # model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
 
     model = ptcv_get_model(model_name, pretrained=True)
     print(model)

@@ -27,7 +27,7 @@ from const import idx2label, label2idx
 
 
 model_list = ['resnet20_cifar10', 'resnet1001_cifar10', 'resnet1202_cifar10', 'nin_cifar10', 'preresnet20_cifar10']
-model_name = model_list[2]
+model_name = model_list[3]
 
 
 def unpickle(file):
@@ -96,9 +96,6 @@ def attack(model, data_loader):
         predict = torch.argmax(y, 1)
         
         print('origin: ', predict)
-
-
-
         if labels[0] != predict[0]:
             for pic, name in zip(perturbed_batch, batch['filenames']):
                 save_image(pic, name)
@@ -141,20 +138,13 @@ def attack(model, data_loader):
         f.write(str(origin)+'\n'+str(perb)+'\n')
 
 
-
 #def eval()
-
-
-
-
 
 
 
 def main(args):
     # model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
 
     model = ptcv_get_model(model_name, pretrained=True)
     print(model)
