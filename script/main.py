@@ -100,10 +100,12 @@ def attack(model, data_loader):
 
 
         if labels[0] != predict[0]:
+            for pic, name in zip(perturbed_batch, batch['filenames']):
+                save_image(pic, name)
             continue
         
+
         loss_f = torch.nn.CrossEntropyLoss()
-        
         loss = loss_f(y, labels)
         loss.backward()
         # Collect datagrad
@@ -111,7 +113,6 @@ def attack(model, data_loader):
         eps = 0.03
 
         perturbed_batch = torch.stack([fgsm_attack(x, eps, data_grad[idx]) for idx,x in enumerate(imgs)])       
-
         perturbed_y = model(perturbed_batch)
         ### save
         for pic, name in zip(perturbed_batch, batch['filenames']):
@@ -135,6 +136,9 @@ def attack(model, data_loader):
     print('origin ', origin)
     print('perb   ', perb)
     print('diff   ', diff)
+
+    with open('./results/' + model_name + '/accu.txt', 'w') as f:
+        f.write(str(origin)+'\n'+str(perb)+'\n')
 
 
 
