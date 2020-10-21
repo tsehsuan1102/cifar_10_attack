@@ -8,19 +8,19 @@ from pathlib import Path
 from const import idx2label, label2idx
 
 class MyDataset(Dataset):
-    def __init__(self, filenames, transform=None):
+    def __init__(self, filedir, filenames, transform=None):
         with open(filenames) as f:
             self.filenames = [ line.strip() for line in f.readlines() ]
         self.transform = transform
+        self.filedir = filedir
         
     def __getitem__(self, idx):
-        now = self.filenames[idx]
+        now = self.filedir + '/' + self.filenames[idx]
         #os.path.splitext(os.path.split(path)[1])
         filename = os.path.split(now)[1]
         label_name = Path(now).stem[:-1]
         if label_name[-1] == '1':
             label_name = label_name[:-1]
-        
 
         #print(label_name, label2idx[label_name])
         image = Image.open(now).convert('RGB')
