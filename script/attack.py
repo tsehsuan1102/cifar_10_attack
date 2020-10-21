@@ -60,37 +60,44 @@ def save_image(tensor, filename):
 
 
 
-
-
-
 def main(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
     classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
     
     ## load original data
     transform = get_transform(32)
-    origin_data  = image_folder_custom_label(root_dir='./origin', transform=transform, idx2label=classes)
-    origin_loader = torch.utils.data.DataLoader(origin_data, batch_size=1, shuffle=False)
+    #origin_data  = image_folder_custom_label(root_dir='./origin', transform=transform, idx2label=classes)
+    #origin_loader = torch.utils.data.DataLoader(origin_data, batch_size=1, shuffle=False)
 
-    
+    origin_data = MyDataset(
+        filenames = args.filenames,
+        transform=transform
+    )
+    origin_loader = DataLoader(
+        origin_data,
+        batch_size=1,
+        shuffle=False,
+        collate_fn=my_collate_fn
+    )
+
     ## load model
     model = ptcv_get_model(model_name, pretrained=True)
     print(model)
     
-    
-    pbar = tqdm(origin_loader)
-    for i, (images, labels) in enumerate(pbar):
-
-        print(i)
-    
-
-
-    ## attack
     atk = torchattacks.PGD(model, eps = 8/255, alpha = 2/255, steps=4)
-    adversarial_images = atk(images, labels)
-    
-    print(adversarial_images.shape)    
+    logging.info('Model: %s, Attack Method: %s\n' % (model_name, atk))
+    pbar = tqdm(origin_loader)
+
+    for i, batch in enumerate(pbar):
+        images = batch['imgs']
+        labels = batch['labels']  
+        filenames = batch['filenames']
+        print(images.shape, labels, filenames)
+
+        ## attack
+        adversarial_images = atk(images, labels)
+        #print(adversarial_images.shape)
+        save_image(adversarial_images, filenames[0])
 
 
 
@@ -114,6 +121,7 @@ if __name__=='__main__':
         datefmt='%m-%d %H:%M:%S'
     )
     main(args)
+
 
 
 

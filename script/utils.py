@@ -28,5 +28,8 @@ def image_folder_custom_label(root_dir, transform, idx2label) :
 
     new_data.classes = idx2label
     new_data.class_to_idx = label2idx
+    
+
+
 
     return new_data
