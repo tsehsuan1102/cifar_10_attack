@@ -138,7 +138,8 @@ def main(args):
         #print(model)
         
         #atk = torchattacks.PGD(model, eps = 8/255, alpha = 2/255, steps=4)
-        atk = torchattacks.BIM(model, eps=8/255, alpha=2/255, steps=7)
+        #atk = torchattacks.BIM(model, eps=0.031, alpha=2/255, steps=7)
+        atk = torchattacks.MultiAttack(model, [torchattacks.PGD(model, eps=0.029, alpha=2/255, steps=7, random_start=True)]*10)
         #atk = torchattacks.FGSM(model, eps=8/255)
         logging.info('Model: %s, Attack Method: %s\n' % (model_name, atk))
         pbar = tqdm(origin_loader)

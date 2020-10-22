@@ -84,7 +84,7 @@ def fgsm_attack(image, epsilon, data_grad):
 
 
 
-def diff(imga, imgb):
+#def diff(imga, imgb):
 
 
 
